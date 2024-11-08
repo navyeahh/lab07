@@ -102,14 +102,21 @@ glance(score_bty_fit)$r.squared
 
 6. Make a plot of residuals vs. predicted values for the model above.
 
-```{r viz-score_bty_fit-diagnostic, eval = FALSE}
+```{r viz-score_bty_fit-diagnostic}
 # remove eval = FALSE from the code chunk options after filling in the blanks
 score_bty_aug <- augment(score_bty_fit$fit)
 
 ggplot(
-  data = score_bty_aug,
+  data = evals,
+  mapping = aes(
+    x = bty_avg,
+    y = 3.88 + 0.67*bty_avg
+  )
+) +
+  geom_jitter()+
+  geom_smooth(method = lm)
+
   
-) + ...
 ```
 
 # Exercise 3: Simple Linear regression with a categorical predictor
