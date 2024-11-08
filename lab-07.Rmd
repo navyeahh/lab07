@@ -1,6 +1,6 @@
 ---
 title: "Lab 07 - Modelling course evaluations"
-author: "INSERT NAME HERE"
+author: "Navya Bhamidipati"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -24,59 +24,81 @@ evals<-read.csv("data/evals.csv", row.names=1)
 1.  Visualize the distribution of `score` in the dataframe `evals`.
 
 ```{r viz-score}
-# add code here
+ggplot(
+  data = evals,
+  mapping = aes(
+    x = score
+  )
+) +
+  geom_histogram()
 ```
 
-*Add your other details and narratives here.*
+*Yes, the data is negatively skewed. More people have given higher scores than lower ones. So, students rate the courses/professors higher than lower. That is what I expected to see because students might not want to risk giving their professors a lower rating if it may affect their grade in the future.*
 
 2.  Visualize and describe the relationship between `score` and `bty_avg` using `geom_point()` to represent the data. 
 
 ```{r scatterplot}
-# add code here
+ggplot(
+  data = evals,
+  mapping =
+    aes(
+      x = bty_avg,
+      y = score
+    )
+  )+
+  geom_jitter()
 ```
 
-*Add your narrative and other details here.*
+*Jitter moves the points in the dataset around by adding random variation to them. This helps us see the points with similar values e.g overplotting. The initial scatterplot did not show the overlapping points and gave the impression that there were very few entries. *
 
 # Exercise 2: Simple Linear regression with a numerical predictor
 
 1. Fit a linear model called `score_bty_fit` to predict average professor evaluation `score` from average beauty rating (`bty_avg`). Print the regression output using `tidy()`.
 
-```{r fit-score_bty_fit, eval = FALSE}
+```{r fit-score_bty_fit}
 # remove eval = FALSE from the code chunk options after filling in the blanks
 score_bty_fit <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(___ ~ ___, data = ___)
+  fit(score ~ bty_avg, data = evals)
 ```
 
 ```{r tidy-score_bty_fit, eval = FALSE}
 # remove eval = FALSE from the code chunk options after filling in the blanks
-tidy(___)
+tidy(score_bty_fit)
 ```
 
-*Add your linear model here. Don't worry too much about notation, you can use things like score-hat.*
+*score-hat = 3.88 + 0.067(bty_avg-hat).*
 
 2. Plot the data again using `geom_jitter()`, and add the regression line.
 
 ```{r viz-score_bty_fit,eval=FALSE}
-# add your plot here. Hint, you can add the regression line using geom_smooth()
+ggplot(
+  data = evals,
+  mapping = aes(
+    x = bty_avg,
+    y = score
+  )
+) +
+  geom_jitter()+
+  geom_smooth(method = lm)
 ```
 
 3. Interpret the slope of the linear model in context of the data.
 
-*Add your interpretation here*
+*For each change in one unit or one point of the average beauty score, the score is expected to change by 0.067 on average.  *
 
 4. Interpret the intercept of the linear model in context of the data. Comment on whether or not the intercept makes sense in this context.
 
-*Add your interpretation here*
+*For a beauty-average score of 0, the score is expected to be 3.88. This makes sense in this context because scores were calculated as the sum of beauty along with other teaching metrics. So , they could have a score of 0 on beauty but still score high in other parameters.*
 
 5. Determine the $R^2$ of the model and interpret it in the context of the data.
 
-```{r R2, eval = FALSE}
+```{r R2}
 # remove eval = FALSE from the code chunk options after filling in the blanks
-glance(___)$___
+glance(score_bty_fit)$r.squared
 ```
 
-*Add your interpretation here*
+*There is a slight positive correlation between beauty and score. The correlation coefficient (coefficient of determination) is 0.035.*
 
 6. Make a plot of residuals vs. predicted values for the model above.
 
@@ -84,7 +106,10 @@ glance(___)$___
 # remove eval = FALSE from the code chunk options after filling in the blanks
 score_bty_aug <- augment(score_bty_fit$fit)
 
-ggplot(___) + ...
+ggplot(
+  data = score_bty_aug,
+  
+) + ...
 ```
 
 # Exercise 3: Simple Linear regression with a categorical predictor
